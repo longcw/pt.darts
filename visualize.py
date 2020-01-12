@@ -61,12 +61,13 @@ def plot(genotype, file_path, caption=None):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        raise ValueError("usage:\n python {} GENOTYPE".format(sys.argv[0]))
-
+    if len(sys.argv) not in [2, 3]:
+        raise ValueError("usage:\n python {} GENOTYPE [N_EDGES]".format(sys.argv[0]))
     genotype_str = sys.argv[1]
+    n_edges_per_node = int(sys.argv[2]) if len(sys.argv) == 3 else None
+    
     try:
-        genotype = gt.from_str(genotype_str)
+        genotype = gt.from_str(genotype_str, n_edges_per_node)
     except AttributeError:
         raise ValueError("Cannot parse {}".format(genotype_str))
 

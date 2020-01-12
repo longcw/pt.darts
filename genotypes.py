@@ -44,7 +44,7 @@ def to_dag(C_in, gene, reduction):
     return dag
 
 
-def from_str(s):
+def from_str(s, n_edges=None):
     """ generate genotype from string
     e.g. "Genotype(
             normal=[[('sep_conv_3x3', 0), ('sep_conv_3x3', 1)],
@@ -60,7 +60,22 @@ def from_str(s):
     """
 
     genotype = eval(s)
-
+    
+    # be compatible to original format where genotype.norm = [(), (), ...]
+    def convert(ops):
+        assert len(ops) % n_edges == 0
+        n_nodes = len(ops) // n_edges
+        ops = [ops[i * n_edges: (i + 1) * n_edges] for i in range(n_nodes)]
+        return ops
+        
+    if n_edges is not None:
+        genotype = Genotype(
+            normal=convert(genotype.normal),
+            normal_concat=genotype.normal_concat,
+            reduce=convert(genotype.reduce),
+            reduce_concat=genotype.reduce_concat
+        )
+        
     return genotype
 
 
