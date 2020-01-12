@@ -7,10 +7,31 @@ import torchvision.datasets as dset
 import numpy as np
 import preproc
 
+from keyboard_data import dataset as keyboard_data
+
+
+def get_keyboard_data(data_path, validation):
+    trn_data = keyboard_data.KeyboardImageDataset(
+        data_path, subset='train', 
+        data_balance_rate=0.2, keep_size=False
+    )
+    input_size = keyboard_data.IMAGE_SIZE
+    input_channels = 1
+    n_classes = len(keyboard_data.LABELS)
+    
+    rtn = [input_size, input_channels, n_classes, trn_data]
+    if validation:
+        val_data = keyboard_data.KeyboardImageDataset(data_path, subset='test')
+        rtn.append(val_data)
+    return rtn
+
 
 def get_data(dataset, data_path, cutout_length, validation):
     """ Get torchvision dataset """
     dataset = dataset.lower()
+    
+    if dataset == 'keyboard':
+        return get_keyboard_data(data_path, validation)
 
     if dataset == 'cifar10':
         dset_cls = dset.CIFAR10
